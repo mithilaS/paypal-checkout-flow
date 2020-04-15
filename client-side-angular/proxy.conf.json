@@ -1,0 +1,6 @@
+{
+  "/order":{
+  "target": "http://40.117.143.140:9090",
+  "secure": false
+  }
+}

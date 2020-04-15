@@ -1,0 +1,172 @@
+<br><br><br>
+
+<div class="shopping-cart" *ngIf="!paidFor">
+  <div class="column-labels">
+    <label class="product-image">Image</label>
+    <label class="product-details">Product</label>
+    <label class="product-quantity">Quantity</label>
+    <label class="product-price">Price</label>
+    <label class="product-price1">Tax</label>
+    <label class="product-line-price">Total</label>
+  </div>
+
+  <div  class="product"*ngFor="let item of items">
+    <!--<div class="product"> -->
+    <div class="product-image">
+      <img [src]="item.img">
+    </div>
+    <div class="product-details">
+      <div class="product-title">{{ item.name }} </div>
+      <p class="product-description"> {{item.description}}</p>
+    </div>
+    <div class="product-quantity">
+      <input type="number"  readonly=true [value]="item.quantity" min="1">
+    </div>
+     <div class="product-price">{{item.value}}</div>
+
+    <div class="product-price1">{{item.tax}}</div>
+    <div class="product-line-price">{{item.total}}</div>
+  </div>
+
+
+  <div class="totals">
+    <div class="totals-item">
+      <label>Subtotal</label>
+      <div class="totals-value" id="cart-subtotal">{{products.purchase_units.amount.breakdown.item_total.value}}</div>
+    </div>
+    <div class="totals-item">
+      <label>Tax Total</label>
+      <div class="totals-value" id="cart-tax">{{products.purchase_units.amount.breakdown.item_total.taxtotal}}</div>
+    </div>
+    <div class="totals-item">
+      <label>Shipping</label>
+      <div class="totals-value" id="cart-shipping">{{products.purchase_units.amount.breakdown.item_total.shippingtotal}}</div>
+    </div>
+    <div class="totals-item">
+      <label>Discount</label>
+      <div class="totals-value" id="cart-shipping">{{products.purchase_units.amount.breakdown.item_total.discount}}</div>
+    </div>
+    <div class="totals-item totals-item-total">
+      <label>Grand Total</label>
+      <div class="totals-value" id="cart-total">{{products.purchase_units.amount.value}}</div>
+    </div>
+  </div>
+
+
+</div>
+
+<div  width="250px" class="totals-value" [hidden]="paidFor" #paypal></div>
+
+<br>
+
+<div *ngIf=paidFor>
+  <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+        	<div class="invoice-title">
+    			<h2>Order placed succesfully with order ID : {{orderSummary.id}}</h2>
+    		<hr>
+    		</div>
+    		<div class="row">
+    			<div class="col-xs-6">
+    				<address>
+    				<strong>Billed To:</strong><br>
+    				{{orderSummary.payername}}<br>
+            {{orderSummary.payeeaddl1}}<br>
+    				{{orderSummary.payeeemail}}
+    				</address>
+    			</div>
+    			<div class="col-xs-6 text-right">
+    				<address>
+        			<strong>Shipped To:</strong><br>
+              {{orderSummary.shipname}}<br>
+              {{orderSummary.shipaddrl1}}<br>
+    					{{orderSummary.shipaddrl2}}<br>
+    					{{orderSummary.shipaddrl3}}
+    				</address>
+    			</div>
+    		</div>
+
+    	</div>
+    </div>
+
+    <div class="row">
+    	<div class="col-md-12">
+    		<div class="panel panel-default">
+    			<div class="panel-heading">
+    				<h3 class="panel-title"><strong>Order placed on {{orderSummary.createdate}}</strong></h3>
+    			</div>
+    			<div class="panel-body">
+    				<div class="table-responsive">
+    					<table class="table table-condensed">
+    						<thead>
+                      <tr>
+                        <td><strong>Product</strong></td>
+
+                        <td class="text-center"><strong>Quantity</strong></td>
+                        <td class="text-center"><strong>Price</strong></td>
+
+                       </tr>
+    						</thead>
+    						<tbody>
+    							<!-- foreach ($order->lineItems as $line) or some such thing here -->
+                <tr *ngFor="let itm of orderSummary.items">
+                  <td class="col-md-3">
+                    <div class="media">
+                         <div class="media-body">
+                             <h4 class="media-heading"> {{itm.name}}</h4>
+                             <h5 class="media-heading"> {{itm.description}}</h5>
+                         </div>
+                    </div>
+                </td>
+                <td class="text-center">{{itm.quantity}}</td>
+                <td class="text-center">{{itm.amount}}</td>
+                </tr>
+    						</tbody>
+    					</table>
+    				</div>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+
+    <div class="row">
+         <div class="col-md-12">
+            <div class="col-md-4">
+            	<h3 class="text-center">Order Summary</h3><hr>
+            	<div class="pull-left"><h4>Subtotal</h4> </div>
+            	<div class="pull-right"><h4 class="text-right">${{orderSummary.subtotalAmt}}</h4></div>
+            	<div class="clearfix"></div>
+            	<div class="pull-left"><h4>Tax</h4> </div>
+            	<div class="pull-right"><h4 class="text-right">${{orderSummary.totaltax}}</h4></div>
+              <div class="clearfix"></div>
+              <div class="pull-left"><h4>Shipping</h4> </div>
+            	<div class="pull-right"><h4 class="text-right">${{orderSummary.totalShipAmt}}</h4></div>
+              <div class="clearfix"></div>
+              <div class="pull-left"><h4>Discount</h4> </div>
+            	<div class="pull-right"><h4 class="text-right">${{orderSummary.totaldiscount}}</h4></div>
+            	<div class="clearfix"></div>
+            	<div class="pull-left"><h4>Order Total</h4> </div>
+            	<div class="pull-right"><h4 class="text-right">${{orderSummary.totalAmt}}</h4></div>
+            	<div class="clearfix"></div>
+        	</div>
+
+        	<div class="col-md-4 offset-md-2">
+            	<h3 class="text-center">Other Info</h3><hr>
+            	<address>
+            	    <strong>Order details:</strong><br>
+
+            	   Order status : {{orderSummary.status}}
+            	 </address>
+        	</div>
+    	</div>
+    </div>
+    <div>
+      <button  ng-click="paidFor=0" > Back</button>
+    </div>
+</div>
+
+
+</div>
+
+

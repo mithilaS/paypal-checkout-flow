@@ -1,0 +1,260 @@
+<!doctype html>
+<html>
+<head>
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <meta charset="utf-8" />
+    <title>
+        AngularJS - REST Demo using $http service
+    </title>
+    <!-- Load AngularJS -->
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script type="text/javascript">
+            var app = angular.module("UserManagement", []);
+
+            //Controller Part
+            app.controller("UserManagementController", function($scope, $http) {
+
+                //Initialize page with default data which is blank in this example
+                $scope.employees = [];
+                $scope.form = {
+                    id : -1,
+                    firstName : "",
+                    lastName : "",
+                    email : ""
+                };
+
+                //Now load the data from server
+                _refreshPageData();
+
+                //HTTP POST/PUT methods for add/edit employee
+                $scope.submitEmployee = function() {
+
+                    var method = "";
+                    var url = "";
+                    if ($scope.form.id == -1) {
+                        //Id is absent so add employee - POST operation
+                        method = "POST";
+                        url = 'employees';
+                    } else {
+                        //If Id is present, it's edit operation - PUT operation
+                        method = "PUT";
+                        url = 'employees/' + $scope.form.id;
+                    }
+
+                    $http({
+                        method : method,
+                        url : url,
+                        data : angular.toJson($scope.form),
+                        headers : {
+                            'Content-Type' : 'application/json'
+                        }
+                    }).then( _success, _error );
+                };
+
+                //HTTP DELETE- delete employee by Id
+                $scope.removeEmployee = function(employee) {
+                    $http({
+                        method : 'DELETE',
+                        url : 'employees/' + employee.id
+                    }).then(_success, _error);
+                };
+
+                //In case of edit employee, populate form with employee data
+                $scope.editEmployee = function(employee) {
+                    $scope.form.firstName = employee.firstName;
+                    $scope.form.lastName = employee.lastName;
+                    $scope.form.email = employee.email;
+                    $scope.form.id = employee.id;
+                };
+
+                /* Private Methods */
+                //HTTP GET- get all employees collection
+                function _refreshPageData() {
+                    $http({
+                        method : 'GET',
+                        url : 'employees'
+                    }).then(function successCallback(response) {
+                        $scope.employees = response.data.employees;
+                    }, function errorCallback(response) {
+                        console.log(response.statusText);
+                    });
+                }
+
+                function _success(response) {
+                    _refreshPageData();
+                    _clearForm()
+                }
+
+                function _error(response) {
+                    console.log(response.statusText);
+                }
+
+                //Clear the form
+                function _clearForm() {
+                    $scope.form.firstName = "";
+                    $scope.form.lastName = "";
+                    $scope.form.email = "";
+                    $scope.form.id = -1;
+                };
+            });
+        </script>
+    <style>
+            .button {
+                cursor: pointer;
+                color: blue;
+            }
+            td,th{
+                border: 1px solid gray;
+                width: 25%;
+                text-align: left;
+            }
+            table {
+                width: 600px;
+            }
+        </style>
+    <head>
+<body ng-app="UserManagement" ng-controller="UserManagementController">
+<h1>
+    AngularJS - Use $http to invoke RESTful APIs
+</h1>
+
+<table>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Actions</th>
+    </tr>
+
+    <tr ng-repeat="employee in employees">
+        <td>{{ employee.firstName }}</td>
+        <td>{{ employee.lastName }}</td>
+        <td>{{ employee.email }}</td>
+        <td><a ng-click="editEmployee( employee )" class="button">Edit</a> | <a ng-click="removeEmployee( employee )" class="button">Remove</a></td>
+    </tr>
+
+</table>
+
+<h2>Add/Edit Employee</h2>
+
+
+<h1>Shopping Cart</h1>
+
+<div class="shopping-cart">
+
+    <div class="column-labels">
+        <label class="product-image">Image</label>
+        <label class="product-details">Product</label>
+        <label class="product-price">Price</label>
+        <label class="product-quantity">Quantity</label>
+        <label class="product-removal">Remove</label>
+        <label class="product-line-price">Total</label>
+    </div>
+
+    <div class="product">
+        <div class="product-image">
+            <img src="images/nike.jpg">
+        </div>
+        <div class="product-details">
+            <div class="product-title">Nike Flex Form TR Women's Sneaker</div>
+            <p class="product-description"> It has a lightweight, breathable mesh upper with forefoot cables for a locked-down fit.</p>
+        </div>
+        <div class="product-price">12.99</div>
+        <div class="product-quantity">
+            <input type="number" value="2" min="1">
+        </div>
+        <div class="product-removal">
+            <button class="remove-product">
+                Remove
+            </button>
+        </div>
+        <div class="product-line-price">25.98</div>
+    </div>
+
+    <div class="product">
+        <div class="product-image">
+            <img src="images/adidas.jpg">
+        </div>
+        <div class="product-details">
+            <div class="product-title">ULTRABOOST UNCAGED SHOES</div>
+            <p class="product-description">Born from running culture, these men's shoes deliver the freedom of a cage-free design</p>
+        </div>
+        <div class="product-price">45.99</div>
+        <div class="product-quantity">
+            <input type="number" value="1" min="1">
+        </div>
+        <div class="product-removal">
+            <button class="remove-product">
+                Remove
+            </button>
+        </div>
+        <div class="product-line-price">45.99</div>
+    </div>
+
+    <div class="totals">
+        <div class="totals-item">
+            <label>Subtotal</label>
+            <div class="totals-value" id="cart-subtotal">71.97</div>
+        </div>
+        <div class="totals-item">
+            <label>Tax (5%)</label>
+            <div class="totals-value" id="cart-tax">3.60</div>
+        </div>
+        <div class="totals-item">
+            <label>Shipping</label>
+            <div class="totals-value" id="cart-shipping">15.00</div>
+        </div>
+        <div class="totals-item totals-item-total">
+            <label>Grand Total</label>
+            <div class="totals-value" id="cart-total">90.57</div>
+        </div>
+    </div>
+
+
+    <script>
+        // Render the PayPal button into #paypal-button-container
+        paypal.Buttons({
+
+            // Set up the transaction
+            createOrder: function(data, actions) {
+                return fetch('order1/createPayment', {
+                    method: 'post',
+                    headers: {
+                    'content-type': 'application/json'
+                    }
+                }).then(function(res) {
+                    return res.json();
+                }).then(function(data) {
+                    return data.orderId
+                });
+            },
+
+            // Finalize the transaction
+            onApprove: function(data, actions) {
+                return fetch('order1/completePayment' , {
+                    method: 'post',
+                    headers: {
+                        //'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({orderId: data.orderID})
+                }).then(function(res) {
+                    return res.json();
+                }).then(function(details) {
+                    // Show a success message to the buyer
+                    console.log(details);
+                    alert('Transaction completed by ' + details.payer.name.given_name + '!');
+                });
+            }
+
+
+        }).render('#paypal-button-container');
+    </script>
+
+</div>
+
+</body>
+</html>
